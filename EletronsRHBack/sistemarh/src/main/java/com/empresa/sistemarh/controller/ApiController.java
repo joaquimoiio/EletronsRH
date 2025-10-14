@@ -1,0 +1,427 @@
+package com.empresa.sistemarh.controller;
+
+import com.empresa.sistemarh.dto.VagaDTO;
+import com.empresa.sistemarh.model.*;
+import com.empresa.sistemarh.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api")
+@CrossOrigin(origins = "*")
+public class ApiController {
+
+    @Autowired
+    private AreaService areaService;
+
+    @Autowired
+    private VagaService vagaService;
+
+    @Autowired
+    private CandidatoService candidatoService;
+
+    @Autowired
+    private EventoService eventoService;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    // === AUTENTICAÇÃO ===
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        try {
+            String email = credentials.get("email");
+            String senha = credentials.get("senha");
+
+            if (email == null || senha == null) {
+                return ResponseEntity.badRequest().body("Email e senha são obrigatórios");
+            }
+
+            Usuario usuario = usuarioService.autenticar(email, senha);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", usuario.getId());
+            response.put("email", usuario.getEmail());
+            response.put("role", usuario.getRole());
+            response.put("success", true);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(401).body(error);
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Logout realizado com sucesso");
+        return ResponseEntity.ok(response);
+    }
+
+    // === ESTATÍSTICAS ===
+    @GetMapping("/estatisticas")
+    public ResponseEntity<Map<String, Object>> getEstatisticas() {
+        Map<String, Object> stats = new HashMap<>();
+
+        List<Area> areas = areaService.listarTodas();
+        List<Vaga> vagasAtivas = vagaService.listarVagasAtivas();
+        List<Evento> eventos = eventoService.listarTodos();
+
+        // Contar total de candidatos usando o método do service
+        long totalCandidatos = candidatoService.contarTotalCandidatos();
+
+        stats.put("totalAreas", areas.size());
+        stats.put("vagasAtivas", vagasAtivas.size());
+        stats.put("totalEventos", eventos.size());
+        stats.put("totalCandidatos", totalCandidatos);
+
+        return ResponseEntity.ok(stats);
+    }
+
+    // === ÁREAS ===
+    @GetMapping("/areas")
+    public ResponseEntity<List<Area>> listarAreas() {
+        return ResponseEntity.ok(areaService.listarTodas());
+    }
+
+    @GetMapping("/areas/{id}")
+    public ResponseEntity<Area> buscarArea(@PathVariable Long id) {
+        return areaService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/areas")
+    public ResponseEntity<?> criarArea(@RequestBody Map<String, String> request) {
+        try {
+            String nome = request.get("nome");
+            if (nome == null || nome.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Nome é obrigatório");
+            }
+
+            Area area = new Area(nome.trim());
+            Area areaSalva = areaService.salvar(area);
+            return ResponseEntity.ok(areaSalva);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/areas/{id}")
+    public ResponseEntity<?> atualizarArea(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            String nome = request.get("nome");
+            if (nome == null || nome.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Nome é obrigatório");
+            }
+
+            Area area = new Area(nome.trim());
+            Area areaAtualizada = areaService.atualizar(id, area);
+            return ResponseEntity.ok(areaAtualizada);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/areas/{id}")
+    public ResponseEntity<?> deletarArea(@PathVariable Long id) {
+        try {
+            areaService.deletar(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // === VAGAS ===
+    @GetMapping("/vagas")
+    public ResponseEntity<List<VagaDTO>> listarTodasVagas() {
+        List<Vaga> vagas = vagaService.listarTodas();
+        List<VagaDTO> vagasDTO = vagas.stream()
+                .map(vaga -> {
+                    long candidatosCount = candidatoService.contarCandidatosPorVaga(vaga.getId());
+                    long candidatosChamadosCount = candidatoService.contarCandidatosChamadosPorVaga(vaga.getId());
+                    return new VagaDTO(vaga, candidatosCount, candidatosChamadosCount);
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(vagasDTO);
+    }
+
+    @GetMapping("/vagas/ativas")
+    public ResponseEntity<List<Vaga>> listarVagasAtivas() {
+        return ResponseEntity.ok(vagaService.listarVagasAtivas());
+    }
+
+    @GetMapping("/vagas/{id}")
+    public ResponseEntity<Vaga> buscarVaga(@PathVariable Long id) {
+        return vagaService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/vagas")
+    public ResponseEntity<?> criarVaga(@RequestBody Map<String, Object> request) {
+        try {
+            String titulo = (String) request.get("titulo");
+            String descricao = (String) request.get("descricao");
+            String requisitos = (String) request.get("requisitos");
+            String beneficios = (String) request.get("beneficios");
+            String salario = (String) request.get("salario");
+            String localizacao = (String) request.get("localizacao");
+
+            if (titulo == null || titulo.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Título é obrigatório");
+            }
+
+            // Aceitar areaId diretamente ou area com id
+            Long areaId = null;
+            if (request.get("areaId") != null) {
+                areaId = Long.valueOf(request.get("areaId").toString());
+            } else if (request.get("area") instanceof Map) {
+                Map<String, Object> areaMap = (Map<String, Object>) request.get("area");
+                if (areaMap.get("id") != null) {
+                    areaId = Long.valueOf(areaMap.get("id").toString());
+                }
+            }
+
+            if (areaId == null) {
+                return ResponseEntity.badRequest().body("Área é obrigatória");
+            }
+
+            Area area = areaService.buscarPorId(areaId)
+                    .orElseThrow(() -> new IllegalArgumentException("Área não encontrada"));
+
+            Vaga vaga = new Vaga(titulo.trim(), area, descricao);
+            vaga.setRequisitos(requisitos);
+            vaga.setBeneficios(beneficios);
+            vaga.setSalario(salario);
+            vaga.setLocalizacao(localizacao);
+
+            Vaga vagaSalva = vagaService.salvar(vaga);
+            return ResponseEntity.ok(vagaSalva);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/vagas/{id}")
+    public ResponseEntity<?> atualizarVaga(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        try {
+            String titulo = (String) request.get("titulo");
+            String descricao = (String) request.get("descricao");
+            String requisitos = (String) request.get("requisitos");
+            String beneficios = (String) request.get("beneficios");
+            String salario = (String) request.get("salario");
+            String localizacao = (String) request.get("localizacao");
+
+            if (titulo == null || titulo.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Título é obrigatório");
+            }
+
+            // Aceitar areaId diretamente ou area com id
+            Long areaId = null;
+            if (request.get("areaId") != null) {
+                areaId = Long.valueOf(request.get("areaId").toString());
+            } else if (request.get("area") instanceof Map) {
+                Map<String, Object> areaMap = (Map<String, Object>) request.get("area");
+                if (areaMap.get("id") != null) {
+                    areaId = Long.valueOf(areaMap.get("id").toString());
+                }
+            }
+
+            if (areaId == null) {
+                return ResponseEntity.badRequest().body("Área é obrigatória");
+            }
+
+            Area area = areaService.buscarPorId(areaId)
+                    .orElseThrow(() -> new IllegalArgumentException("Área não encontrada"));
+
+            Vaga vagaAtualizada = new Vaga(titulo.trim(), area, descricao);
+            vagaAtualizada.setRequisitos(requisitos);
+            vagaAtualizada.setBeneficios(beneficios);
+            vagaAtualizada.setSalario(salario);
+            vagaAtualizada.setLocalizacao(localizacao);
+
+            Vaga vaga = vagaService.atualizar(id, vagaAtualizada);
+            return ResponseEntity.ok(vaga);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/vagas/{id}/status")
+    public ResponseEntity<?> alterarStatusVaga(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            String status = request.get("status");
+            StatusVaga statusVaga = StatusVaga.valueOf(status);
+            vagaService.alterarStatus(id, statusVaga);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/vagas/{id}")
+    public ResponseEntity<?> deletarVaga(@PathVariable Long id) {
+        try {
+            vagaService.deletar(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // === CANDIDATOS ===
+    @GetMapping("/vagas/{vagaId}/candidatos")
+    public ResponseEntity<List<Candidato>> listarCandidatos(@PathVariable Long vagaId,
+                                                            @RequestParam(required = false) String filtro,
+                                                            @RequestParam(required = false) String status) {
+        List<Candidato> candidatos;
+
+        if (status != null && !status.isEmpty()) {
+            StatusCandidato statusCandidato = StatusCandidato.valueOf(status.toUpperCase());
+            candidatos = candidatoService.buscarPorVagaEStatus(vagaId, statusCandidato, filtro);
+        } else {
+            candidatos = candidatoService.buscarPorVagaENome(vagaId, filtro);
+        }
+
+        return ResponseEntity.ok(candidatos);
+    }
+
+    @GetMapping("/vagas/{vagaId}/candidatos/count")
+    public ResponseEntity<Map<String, Long>> contarCandidatos(@PathVariable Long vagaId) {
+        long count = candidatoService.contarCandidatosPorVaga(vagaId);
+        long countChamados = candidatoService.contarCandidatosChamadosPorVaga(vagaId);
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("total", count);
+        response.put("chamados", countChamados);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/candidaturas")
+    public ResponseEntity<?> criarCandidatura(@RequestParam String nome,
+                                              @RequestParam String email,
+                                              @RequestParam String telefone,
+                                              @RequestParam Long vagaId,
+                                              @RequestParam(required = false) MultipartFile curriculo) {
+        try {
+            Candidato candidato = candidatoService.inscreverCandidato(vagaId, nome, email, telefone, curriculo);
+            return ResponseEntity.ok(candidato);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/candidatos/{candidatoId}/chamar")
+    public ResponseEntity<?> chamarCandidatoParaEntrevista(@PathVariable Long candidatoId) {
+        try {
+            Candidato candidato = candidatoService.chamarParaEntrevista(candidatoId);
+            return ResponseEntity.ok(candidato);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/candidatos/{candidatoId}/status")
+    public ResponseEntity<?> alterarStatusCandidato(@PathVariable Long candidatoId,
+                                                    @RequestBody Map<String, String> request) {
+        try {
+            String status = request.get("status");
+            StatusCandidato novoStatus = StatusCandidato.valueOf(status.toUpperCase());
+            Candidato candidato = candidatoService.alterarStatusCandidato(candidatoId, novoStatus);
+            return ResponseEntity.ok(candidato);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // === EVENTOS ===
+    @GetMapping("/eventos")
+    public ResponseEntity<List<Evento>> listarEventos() {
+        return ResponseEntity.ok(eventoService.listarTodos());
+    }
+
+    @GetMapping("/eventos/{id}")
+    public ResponseEntity<Evento> buscarEvento(@PathVariable Long id) {
+        return eventoService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/eventos")
+    public ResponseEntity<?> criarEvento(@RequestParam String titulo,
+                                         @RequestParam(required = false) MultipartFile imagemCapa) {
+        try {
+            Evento evento = eventoService.criarEvento(titulo, imagemCapa);
+            return ResponseEntity.ok(evento);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/eventos/{id}")
+    public ResponseEntity<?> atualizarEvento(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            String descricao = request.get("descricao");
+            Evento evento = eventoService.atualizarEvento(id, descricao);
+            return ResponseEntity.ok(evento);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/eventos/{id}")
+    public ResponseEntity<?> deletarEvento(@PathVariable Long id) {
+        try {
+            eventoService.deletarEvento(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/eventos/{id}/imagens")
+    public ResponseEntity<List<ImagemEvento>> listarImagensEvento(@PathVariable Long id) {
+        return ResponseEntity.ok(eventoService.listarImagensEvento(id));
+    }
+
+    @PostMapping("/eventos/{id}/imagens")
+    public ResponseEntity<?> adicionarImagemEvento(@PathVariable Long id,
+                                                   @RequestParam MultipartFile imagem) {
+        try {
+            ImagemEvento imagemEvento = eventoService.adicionarImagemEvento(id, imagem);
+            return ResponseEntity.ok(imagemEvento);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/eventos/imagens/{imagemId}")
+    public ResponseEntity<?> deletarImagemEvento(@PathVariable Long imagemId) {
+        try {
+            eventoService.deletarImagemEvento(imagemId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // === NOTIFICAÇÕES ===
+    @PostMapping("/notificacoes")
+    public ResponseEntity<?> criarNotificacao(@RequestBody Map<String, Object> request) {
+        // Implementar se necessário - por enquanto apenas retorna sucesso
+        return ResponseEntity.ok().build();
+    }
+}
