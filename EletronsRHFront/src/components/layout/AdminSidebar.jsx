@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, Calendar, Tags, LogOut, Menu, X } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { useState } from 'react';
 
 const AdminSidebar = () => {
@@ -28,7 +28,7 @@ const AdminSidebar = () => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -43,15 +43,15 @@ const AdminSidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gray-800 text-white transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-6 border-b border-gray-800">
-            <h2 className="text-2xl font-bold text-primary-400">Admin Panel</h2>
-            <p className="text-gray-400 text-sm mt-1">Sistema RH Eletrons</p>
+          <div className="p-6 border-b border-gray-700">
+            <h2 className="text-2xl font-bold text-blue-400">Admin Panel</h2>
+            <p className="text-gray-300 text-sm mt-1">Sistema RH Eletrons</p>
           </div>
 
           {/* Menu Items */}
@@ -64,8 +64,8 @@ const AdminSidebar = () => {
                   to={item.path}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
                     isActive(item.path)
-                      ? 'bg-primary-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      ? 'bg-blue-600 text-white font-bold'
+                      : 'text-white hover:bg-gray-700'
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -77,10 +77,10 @@ const AdminSidebar = () => {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-800">
+          <div className="p-4 border-t border-gray-700">
             <Link
               to="/"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors mb-2"
+              className="flex items-center space-x-3 px-4 py-3 rounded-lg text-white hover:bg-gray-700 transition-colors mb-2"
               onClick={() => setIsOpen(false)}
             >
               <LayoutDashboard size={20} />
@@ -88,7 +88,7 @@ const AdminSidebar = () => {
             </Link>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors"
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-gray-900 hover:text-red-300 transition-colors font-medium"
             >
               <LogOut size={20} />
               <span className="font-medium">Sair</span>

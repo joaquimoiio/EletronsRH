@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { API_CONFIG, STORAGE_KEYS } from '../config/constants';
 
 // Configuração base da API - integrada com o backend existente
-const API_BASE_URL = 'http://localhost:8080/api';
-const UPLOAD_BASE_URL = 'http://localhost:8080/uploads';
+const API_BASE_URL = API_CONFIG.BASE_URL;
+const UPLOAD_BASE_URL = API_CONFIG.UPLOAD_URL;
 
 // Criar instância do axios
 const api = axios.create({
@@ -15,7 +16,7 @@ const api = axios.create({
 // Interceptor para adicionar token de autenticação
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -32,7 +33,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token inválido ou expirado
-      localStorage.removeItem('authToken');
+      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
       window.location.href = '/admin/login';
     }
     return Promise.reject(error);
@@ -83,10 +84,10 @@ export const eventosService = {
 export const authService = {
   login: (email, password) => api.post('/login', { email, senha: password }),
   logout: () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
   },
   isAuthenticated: () => {
-    return !!localStorage.getItem('authToken');
+    return !!localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
   },
 };
 

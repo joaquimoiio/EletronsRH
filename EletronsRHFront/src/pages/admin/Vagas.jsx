@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { vagasService, areasService } from '../../services/api';
 import { Plus, Edit2, Trash2, X, Save, Briefcase, MapPin, DollarSign, Users } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
-import Toast from '../../components/Toast';
-import ConfirmDialog from '../../components/ConfirmDialog';
+import Toast from '../../components/common/Toast';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const Vagas = () => {
   const navigate = useNavigate();
@@ -26,11 +26,7 @@ const Vagas = () => {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const [vagasResponse, areasResponse] = await Promise.all([
@@ -45,7 +41,12 @@ const Vagas = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
 
   const getAreaNome = (areaId) => {
     const area = areas.find(a => a.id === areaId);

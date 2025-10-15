@@ -1,16 +1,16 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { AuthContext } from './AuthContext.js';
 import { authService } from '../services/api';
+import { STORAGE_KEYS } from '../config/constants';
 
-const AuthContext = createContext(null);
-
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Verificar se há um token salvo
-    const token = localStorage.getItem('authToken');
-    const userDataStr = localStorage.getItem('userData');
+    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+    const userDataStr = localStorage.getItem(STORAGE_KEYS.USER_DATA);
 
     if (token && userDataStr) {
       try {
@@ -18,8 +18,8 @@ export const AuthProvider = ({ children }) => {
         setUser({ authenticated: true, ...userData });
       } catch (error) {
         console.error('Erro ao restaurar dados do usuário:', error);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userData');
+        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.USER_DATA);
       }
     }
     setLoading(false);
@@ -36,8 +36,8 @@ export const AuthProvider = ({ children }) => {
           role: response.data.role,
         };
 
-        localStorage.setItem('authToken', 'authenticated');
-        localStorage.setItem('userData', JSON.stringify(userData));
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, 'authenticated');
+        localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(userData));
         setUser({ authenticated: true, ...userData });
         return { success: true };
       } else {
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     authService.logout();
-    localStorage.removeItem('userData');
+    localStorage.removeItem(STORAGE_KEYS.USER_DATA);
     setUser(null);
   };
 
@@ -69,12 +69,4 @@ export const AuthProvider = ({ children }) => {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+}

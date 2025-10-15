@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { vagasService } from '../../services/api';
 import axios from 'axios';
 import {
   ArrowLeft,
   Users,
-  FileText,
   Download,
   Phone,
   Mail,
@@ -16,8 +15,8 @@ import {
   Filter
 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
-import Toast from '../../components/Toast';
-import ConfirmDialog from '../../components/ConfirmDialog';
+import Toast from '../../components/common/Toast';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 
@@ -39,11 +38,7 @@ const Candidatos = () => {
     onConfirm: null
   });
 
-  useEffect(() => {
-    loadData();
-  }, [vagaId, statusFilter]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -74,7 +69,11 @@ const Candidatos = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [vagaId, statusFilter, searchTerm, showToast]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleStatusChange = async (candidatoId, novoStatus, statusLabel) => {
     setConfirmDialog({
@@ -118,7 +117,7 @@ const Candidatos = () => {
     });
   };
 
-  const downloadCurriculo = (caminhoCurriculo, nome) => {
+  const downloadCurriculo = (caminhoCurriculo) => {
     if (!caminhoCurriculo) {
       showToast('Currículo não disponível', 'warning');
       return;

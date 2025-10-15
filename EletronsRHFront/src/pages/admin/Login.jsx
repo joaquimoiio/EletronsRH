@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Lock, User, AlertCircle, ArrowLeft } from 'lucide-react';
 
 const Login = () => {
@@ -22,7 +22,7 @@ const Login = () => {
       } else {
         setError(result.message || 'Email ou senha incorretos');
       }
-    } catch (err) {
+    } catch {
       setError('Erro ao fazer login. Tente novamente.');
     } finally {
       setLoading(false);
@@ -44,7 +44,7 @@ const Login = () => {
               <Lock size={40} />
             </div>
             <h1 className="text-3xl font-bold mb-2">Área Administrativa</h1>
-            <p className="text-primary-100">Faça login para acessar o sistema</p>
+            <p className="text-white">Faça login para acessar o sistema</p>
           </div>
 
           {/* Form */}
@@ -107,7 +107,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
               >
                 {loading ? (
                   <>
