@@ -178,114 +178,177 @@ const Eventos = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Eventos</h1>
-          <p className="text-gray-600 mt-2">Gerencie os eventos da empresa</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Eventos</h1>
+          <p className="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base">Gerencie os eventos da empresa</p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center gap-2 shadow-md hover:shadow-lg"
+          className="bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap"
         >
           <Plus size={20} />
           Novo Evento
         </button>
       </div>
 
-      {/* Table */}
+      {/* Table - Desktop / Cards - Mobile */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Imagem</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Título</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Data</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Hora</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Local</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Vagas</th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {eventos.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
-                    <Calendar size={48} className="mx-auto text-gray-300 mb-3" />
-                    <p className="text-lg font-medium">Nenhum evento cadastrado</p>
-                    <p className="text-sm text-gray-400 mt-1">Clique em "Novo Evento" para começar</p>
-                  </td>
-                </tr>
-              ) : (
-                eventos.map((evento) => (
-                  <tr key={evento.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      {evento.imagemUrl ? (
-                        <img
-                          src={getUploadUrl(evento.imagemUrl)}
-                          alt={evento.titulo}
-                          className="w-16 h-16 object-cover rounded-lg shadow-sm"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                          <ImageIcon size={24} className="text-gray-400" />
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="font-medium text-gray-900">{evento.titulo}</div>
-                      {evento.descricao && (
-                        <div className="text-sm text-gray-500 mt-1 line-clamp-2">{evento.descricao}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <Calendar size={16} className="text-gray-400" />
-                        {formatDate(evento.data)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <Clock size={16} className="text-gray-400" />
-                        {evento.hora || '-'}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <MapPin size={16} className="text-gray-400" />
-                        <span className="line-clamp-1">{evento.local || '-'}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Users size={16} className="text-gray-400" />
-                        <span className="font-medium text-gray-900">{evento.vagas || '0'}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenModal(evento)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Editar"
-                        >
-                          <Edit2 size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(evento.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Excluir"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
+        {eventos.length === 0 ? (
+          <div className="px-6 py-12 text-center text-gray-500">
+            <Calendar size={48} className="mx-auto text-gray-300 mb-3" />
+            <p className="text-lg font-medium">Nenhum evento cadastrado</p>
+            <p className="text-sm text-gray-400 mt-1">Clique em "Novo Evento" para começar</p>
+          </div>
+        ) : (
+          <>
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Imagem</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Título</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Data</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Hora</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Local</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Vagas</th>
+                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Ações</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {eventos.map((evento) => (
+                    <tr key={evento.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        {evento.imagemUrl ? (
+                          <img
+                            src={getUploadUrl(evento.imagemUrl)}
+                            alt={evento.titulo}
+                            className="w-16 h-16 object-cover rounded-lg shadow-sm"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <ImageIcon size={24} className="text-gray-400" />
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-gray-900">{evento.titulo}</div>
+                        {evento.descricao && (
+                          <div className="text-sm text-gray-500 mt-1 line-clamp-2">{evento.descricao}</div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <Calendar size={16} className="text-gray-400" />
+                          {formatDate(evento.data)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <Clock size={16} className="text-gray-400" />
+                          {evento.hora || '-'}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <MapPin size={16} className="text-gray-400" />
+                          <span className="line-clamp-1">{evento.local || '-'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <Users size={16} className="text-gray-400" />
+                          <span className="font-medium text-gray-900">{evento.vagas || '0'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleOpenModal(evento)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Editar"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(evento.id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Excluir"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden divide-y divide-gray-200">
+              {eventos.map((evento) => (
+                <div key={evento.id} className="p-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex gap-3 mb-3">
+                    {evento.imagemUrl ? (
+                      <img
+                        src={getUploadUrl(evento.imagemUrl)}
+                        alt={evento.titulo}
+                        className="w-20 h-20 object-cover rounded-lg shadow-sm shrink-0"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
+                        <ImageIcon size={28} className="text-gray-400" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 text-lg">{evento.titulo}</h3>
+                      {evento.descricao && (
+                        <p className="text-sm text-gray-500 line-clamp-2 mt-1">{evento.descricao}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 mb-3">
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <Calendar size={14} className="text-gray-400" />
+                      <span>{formatDate(evento.data)}</span>
+                      <Clock size={14} className="text-gray-400 ml-2" />
+                      <span>{evento.hora || '-'}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <MapPin size={14} className="text-gray-400" />
+                      <span className="line-clamp-1">{evento.local || '-'}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                      <Users size={14} className="text-purple-600" />
+                      <span className="font-medium text-purple-700">{evento.vagas || '0'} vagas</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
+                    <button
+                      onClick={() => handleOpenModal(evento)}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors text-sm font-medium"
+                    >
+                      <Edit2 size={16} />
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(evento.id)}
+                      className="px-3 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Modal */}

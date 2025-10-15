@@ -163,14 +163,14 @@ const Vagas = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Vagas</h1>
-          <p className="text-gray-600 mt-2">Gerencie as vagas de emprego disponíveis</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Vagas</h1>
+          <p className="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base">Gerencie as vagas de emprego disponíveis</p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl"
+          className="bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center gap-2 shadow-lg hover:shadow-xl whitespace-nowrap"
         >
           <Plus size={20} />
           Nova Vaga
@@ -216,93 +216,157 @@ const Vagas = () => {
         </div>
       </div>
 
-      {/* Table */}
+      {/* Table - Desktop / Cards - Mobile */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Título</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Área</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Localização</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Salário</th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {vagas.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center justify-center text-gray-500">
-                      <Briefcase size={48} className="mb-4 opacity-30" />
-                      <p className="text-lg font-medium">Nenhuma vaga cadastrada</p>
-                      <p className="text-sm mt-1">Clique em "Nova Vaga" para começar</p>
+        {vagas.length === 0 ? (
+          <div className="px-6 py-12 text-center">
+            <div className="flex flex-col items-center justify-center text-gray-500">
+              <Briefcase size={48} className="mb-4 opacity-30" />
+              <p className="text-lg font-medium">Nenhuma vaga cadastrada</p>
+              <p className="text-sm mt-1">Clique em "Nova Vaga" para começar</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Título</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Área</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Localização</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Salário</th>
+                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {vagas.map((vaga) => (
+                    <tr key={vaga.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-primary-100 p-2 rounded-lg">
+                            <Briefcase size={20} className="text-primary-600" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900">{vaga.titulo}</p>
+                            {vaga.descricao && (
+                              <p className="text-sm text-gray-500 line-clamp-1">{vaga.descricao}</p>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                          {vaga.area?.nome || getAreaNome(vaga.area?.id)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <MapPin size={16} className="text-gray-400" />
+                          <span>{vaga.localizacao || '-'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="font-semibold text-green-600">
+                          {formatSalario(vaga.salario)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => navigate(`/admin/vagas/${vaga.id}/candidatos`)}
+                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            title="Ver Candidatos"
+                          >
+                            <Users size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleOpenModal(vaga)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Editar"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(vaga.id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Excluir"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden divide-y divide-gray-200">
+              {vagas.map((vaga) => (
+                <div key={vaga.id} className="p-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="bg-primary-100 p-2 rounded-lg shrink-0">
+                      <Briefcase size={20} className="text-primary-600" />
                     </div>
-                  </td>
-                </tr>
-              ) : (
-                vagas.map((vaga) => (
-                  <tr key={vaga.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-primary-100 p-2 rounded-lg">
-                          <Briefcase size={20} className="text-primary-600" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-900">{vaga.titulo}</p>
-                          {vaga.descricao && (
-                            <p className="text-sm text-gray-500 line-clamp-1">{vaga.descricao}</p>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 text-lg">{vaga.titulo}</h3>
+                      {vaga.descricao && (
+                        <p className="text-sm text-gray-500 line-clamp-2 mt-1">{vaga.descricao}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-600 font-medium">Área:</span>
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                         {vaga.area?.nome || getAreaNome(vaga.area?.id)}
                       </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <MapPin size={16} className="text-gray-400" />
-                        <span>{vaga.localizacao || '-'}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <MapPin size={14} className="text-gray-400" />
+                      <span>{vaga.localizacao || '-'}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                      <DollarSign size={14} className="text-green-600" />
                       <span className="font-semibold text-green-600">
                         {formatSalario(vaga.salario)}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => navigate(`/admin/vagas/${vaga.id}/candidatos`)}
-                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                          title="Ver Candidatos"
-                        >
-                          <Users size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleOpenModal(vaga)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Editar"
-                        >
-                          <Edit2 size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(vaga.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Excluir"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
+                    <button
+                      onClick={() => navigate(`/admin/vagas/${vaga.id}/candidatos`)}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors text-sm font-medium"
+                    >
+                      <Users size={16} />
+                      Candidatos
+                    </button>
+                    <button
+                      onClick={() => handleOpenModal(vaga)}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors text-sm font-medium"
+                    >
+                      <Edit2 size={16} />
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(vaga.id)}
+                      className="px-3 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Modal */}
