@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Variáveis de Cores Grupo Elétrons */
+:root {
+  --color-primary: #004AAD;
+  --color-primary-50: #E6F0FF;
+  --color-primary-100: #CCE0FF;
+  --color-primary-200: #99C2FF;
+  --color-primary-300: #66A3FF;
+  --color-primary-400: #3385FF;
+  --color-primary-500: #004AAD;
+  --color-primary-600: #003A8A;
+  --color-primary-700: #002B67;
+  --color-primary-800: #001D45;
+  --color-primary-900: #000E22;
+
+  --color-secondary: #FFD700;
+  --color-secondary-50: #FFFEF5;
+  --color-secondary-100: #FFFCE0;
+  --color-secondary-200: #FFF9C2;
+  --color-secondary-300: #FFF5A3;
+  --color-secondary-400: #FFF285;
+  --color-secondary-500: #FFD700;
+  --color-secondary-600: #E6C200;
+  --color-secondary-700: #B39600;
+  --color-secondary-800: #806B00;
+  --color-secondary-900: #4D4000;
+}
+
 /* Custom animations */
 @layer utilities {
   .line-clamp-1 {
