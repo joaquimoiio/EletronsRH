@@ -3,23 +3,23 @@ import { AuthProvider } from './contexts/AuthContextProvider';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Layouts
-import PublicLayout from './layouts/PublicLayout';
-import AdminLayout from './layouts/AdminLayout';
+import PublicLayout from './layouts/PublicLayout.jsx';
+import AdminLayout from './layouts/AdminLayout.jsx';
 
 // Public Pages
-import Home from './pages/public/Home';
-import Vagas from './pages/public/Vagas';
-import VagaDetalhes from './pages/public/VagaDetalhes';
-import Eventos from './pages/public/Eventos';
-import EventoDetalhes from './pages/public/EventoDetalhes';
+import Home from './pages/public/Home.jsx';
+import Vagas from './pages/public/Vagas.jsx';
+import VagaDetalhes from './pages/public/VagaDetalhes.jsx';
+import Eventos from './pages/public/Eventos.jsx';
+import EventoDetalhes from './pages/public/EventoDetalhes.jsx';
 
 // Admin Pages
-import Login from './pages/admin/Login';
-import Dashboard from './pages/admin/Dashboard';
-import AdminVagas from './pages/admin/Vagas';
-import AdminEventos from './pages/admin/Eventos';
-import Areas from './pages/admin/Areas';
-import Candidatos from './pages/admin/Candidatos';
+import Login from './pages/admin/Login.jsx';
+import Dashboard from './pages/admin/Dashboard.jsx';
+import AdminVagas from './pages/admin/Vagas.jsx';
+import AdminEventos from './pages/admin/Eventos.jsx';
+import Areas from './pages/admin/Areas.jsx';
+import Candidatos from './pages/admin/Candidatos.jsx';
 
 function App() {
   return (
