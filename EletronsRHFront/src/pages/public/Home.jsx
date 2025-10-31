@@ -27,6 +27,7 @@ const COLORS = {
 
 const Home = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -64,53 +65,120 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Botão WhatsApp Flutuante */}
+      <a
+        href="https://wa.me/5548999866454"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-16 h-16 rounded-full shadow-2xl transition-all duration-300 hover:scale-110"
+        style={{
+          backgroundColor: '#25D366',
+          boxShadow: '0 4px 20px rgba(37, 211, 102, 0.4)'
+        }}
+        aria-label="Contato via WhatsApp"
+      >
+        <svg
+          viewBox="0 0 32 32"
+          className="w-8 h-8"
+          fill="white"
+        >
+          <path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-5.247 1.409 1.417-5.267-0.316-0.518c-1.351-2.217-2.067-4.773-2.067-7.396 0-7.69 6.26-13.95 13.95-13.95s13.95 6.26 13.95 13.95-6.26 13.95-13.95 13.95zM21.305 19.26c-0.346-0.174-2.049-1.007-2.366-1.123-0.316-0.116-0.547-0.174-0.776 0.174s-0.893 1.123-1.094 1.347c-0.201 0.231-0.402 0.26-0.748 0.087-0.346-0.174-1.461-0.539-2.785-1.722-1.031-0.922-1.727-2.059-1.929-2.406-0.201-0.346-0.022-0.533 0.152-0.705 0.156-0.156 0.346-0.402 0.518-0.603 0.174-0.201 0.231-0.346 0.346-0.576 0.116-0.231 0.058-0.433-0.028-0.603s-0.776-1.87-1.063-2.565c-0.28-0.672-0.56-0.58-0.776-0.591-0.201-0.010-0.431-0.012-0.661-0.012s-0.603 0.087-0.919 0.433c-0.316 0.346-1.206 1.179-1.206 2.873s1.235 3.333 1.406 3.561c0.174 0.231 2.427 3.722 5.886 5.212 0.821 0.354 1.462 0.566 1.962 0.724 0.825 0.262 1.577 0.225 2.168 0.137 0.661-0.099 2.049-0.835 2.335-1.642 0.288-0.807 0.288-1.501 0.201-1.642-0.086-0.14-0.316-0.231-0.662-0.405z"/>
+        </svg>
+      </a>
+
       {/* Header Fixo */}
-      <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
-        <div className="container mx-auto px-4">
+      <header className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50" style={{ fontFamily: "'Montserrat', 'Helvetica Neue', Arial, sans-serif" }}>
+        <div className="container mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link to="/" className="flex-shrink-0">
               <img
                 src="http://eletronsmateriaiseletricos.com.br/wp-content/uploads/2018/11/logo-eletrons.png"
                 alt="Grupo Elétrons"
-                className="h-16 w-auto"
+                className="h-12 w-auto"
               />
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link
-                to="/"
-                className="text-lg font-medium transition-colors"
-                style={{ color: COLORS.primary }}
-                onMouseEnter={(e) => e.target.style.color = COLORS.secondary}
-                onMouseLeave={(e) => e.target.style.color = COLORS.primary}
+            <nav className="hidden lg:flex items-center space-x-2">
+              {/* Nossa História - Dropdown */}
+              <div
+                className="relative group"
+                onMouseEnter={() => setOpenDropdown('historia')}
+                onMouseLeave={() => setOpenDropdown(null)}
               >
-                Início
-              </Link>
+                <button className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors tracking-wide uppercase">
+                  Nossa História
+                  <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
+                </button>
+                {openDropdown === 'historia' && (
+                  <div className="absolute top-full left-0 mt-0 bg-white shadow-lg min-w-[240px] py-1 border-t-2 border-gray-800">
+                    <button
+                      onClick={() => scrollToSection('estrutura')}
+                      className="w-full text-left block px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                    >
+                      Estrutura
+                    </button>
+                    <button
+                      onClick={() => scrollToSection('missao')}
+                      className="w-full text-left block px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                    >
+                      Missão, Visão e Valores
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Serviços */}
+              <button
+                onClick={() => scrollToSection('estrutura')}
+                className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors tracking-wide uppercase"
+              >
+                Serviços
+              </button>
+
+              {/* Trabalhe Conosco */}
               <Link
                 to="/vagas"
-                className="text-lg font-medium transition-colors"
-                style={{ color: COLORS.primary }}
-                onMouseEnter={(e) => e.target.style.color = COLORS.secondary}
-                onMouseLeave={(e) => e.target.style.color = COLORS.primary}
+                className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors tracking-wide uppercase"
               >
-                Vagas
+                Trabalhe Conosco
               </Link>
+
+              {/* Blog */}
               <Link
                 to="/eventos"
-                className="text-lg font-medium transition-colors"
-                style={{ color: COLORS.primary }}
-                onMouseEnter={(e) => e.target.style.color = COLORS.secondary}
-                onMouseLeave={(e) => e.target.style.color = COLORS.primary}
+                className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors tracking-wide uppercase"
               >
-                Eventos
+                Blog
               </Link>
+
+              {/* Contato - Dropdown */}
+              <div
+                className="relative group"
+                onMouseEnter={() => setOpenDropdown('contato')}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
+                <button className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors tracking-wide uppercase">
+                  Contato
+                  <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
+                </button>
+                {openDropdown === 'contato' && (
+                  <div className="absolute top-full right-0 mt-0 bg-white shadow-lg min-w-[240px] py-1 border-t-2 border-gray-800">
+                    <button
+                      onClick={() => scrollToSection('contato')}
+                      className="w-full text-left block px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                    >
+                      Solicite um Orçamento
+                    </button>
+                  </div>
+                )}
+              </div>
             </nav>
 
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-2"
+              className="lg:hidden p-2"
               style={{ color: COLORS.primary }}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
@@ -123,31 +191,86 @@ const Home = () => {
 
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
-            <nav className="md:hidden py-4 border-t border-gray-200">
-              <Link
-                to="/"
-                className="block py-3 px-4 text-lg font-medium transition-colors"
-                style={{ color: COLORS.primary }}
-                onClick={() => setMobileMenuOpen(false)}
+            <nav className="lg:hidden py-4 border-t border-gray-200">
+              {/* Nossa História */}
+              <div>
+                <button
+                  onClick={() => setOpenDropdown(openDropdown === 'historia-mobile' ? null : 'historia-mobile')}
+                  className="w-full flex items-center justify-between py-3 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 uppercase"
+                >
+                  Nossa História
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform ${openDropdown === 'historia-mobile' ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {openDropdown === 'historia-mobile' && (
+                  <div className="bg-gray-50">
+                    <button
+                      onClick={() => { scrollToSection('estrutura'); setMobileMenuOpen(false); }}
+                      className="w-full text-left block py-2 px-8 text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Estrutura
+                    </button>
+                    <button
+                      onClick={() => { scrollToSection('missao'); setMobileMenuOpen(false); }}
+                      className="w-full text-left block py-2 px-8 text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Missão, Visão e Valores
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Serviços */}
+              <button
+                onClick={() => { scrollToSection('estrutura'); setMobileMenuOpen(false); }}
+                className="w-full text-left block py-3 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 uppercase"
               >
-                Início
-              </Link>
+                Serviços
+              </button>
+
+              {/* Trabalhe Conosco */}
               <Link
                 to="/vagas"
-                className="block py-3 px-4 text-lg font-medium transition-colors"
-                style={{ color: COLORS.primary }}
+                className="block py-3 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 uppercase"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Vagas
+                Trabalhe Conosco
               </Link>
+
+              {/* Blog */}
               <Link
                 to="/eventos"
-                className="block py-3 px-4 text-lg font-medium transition-colors"
-                style={{ color: COLORS.primary }}
+                className="block py-3 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 uppercase"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Eventos
+                Blog
               </Link>
+
+              {/* Contato */}
+              <div>
+                <button
+                  onClick={() => setOpenDropdown(openDropdown === 'contato-mobile' ? null : 'contato-mobile')}
+                  className="w-full flex items-center justify-between py-3 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 uppercase"
+                >
+                  Contato
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform ${openDropdown === 'contato-mobile' ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {openDropdown === 'contato-mobile' && (
+                  <div className="bg-gray-50">
+                    <button
+                      onClick={() => { scrollToSection('contato'); setMobileMenuOpen(false); }}
+                      className="w-full text-left block py-2 px-8 text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Solicite um Orçamento
+                    </button>
+                  </div>
+                )}
+              </div>
             </nav>
           )}
         </div>
@@ -204,115 +327,45 @@ const Home = () => {
               NOSSA HISTÓRIA
             </h2>
 
-            <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
-              <p className="animate-fade-in">
-                O grupo Elétrons iniciou na garagem de casa, se transformando em uma loja de materiais elétricos em <span className="font-bold" style={{ color: COLORS.primary }}>1992</span>.
-                Com o objetivo de facilitar e fornecer produtos e serviços de qualidade, visando o acesso aos benefícios e soluções da energia elétrica.
+            <div className="space-y-8 text-gray-700 text-lg leading-relaxed">
+              <p className="animate-fade-in text-justify">
+                O grupo Elétrons surgiu em <span className="font-bold" style={{ color: COLORS.primary }}>1992</span>, na cidade de <span className="font-bold" style={{ color: COLORS.primary }}>Tubarão, Santa Catarina</span>, em uma garagem, com o objetivo de facilitar e fornecer produtos e serviços de qualidade, visando o acesso aos benefícios e soluções de energia elétrica. Desde então, transformou-se em referência no Sul de Santa Catarina pela qualidade, confiança e excelência técnica em produtos e serviços do setor elétrico.
               </p>
 
-              <p className="animate-fade-in">
-                Desde então, temos trabalhado com dedicação para sermos reconhecidos na região <span className="font-bold" style={{ color: COLORS.primary }}>Sul de Santa Catarina</span> como uma empresa de produtos e serviços qualificados e certificados no setor elétrico.
-              </p>
+              {/* Divisor */}
+              <div className="border-t border-gray-200 my-8"></div>
 
-              <p className="animate-fade-in">
-                A nossa trajetória é marcada pelo <span className="font-bold" style={{ color: COLORS.primary }}>crescimento constante</span>, incluindo os demais setores de construção, manutenção e projeto de redes de distribuição (Montagens elétricas), juntamente com a fabricação de Kit Postes.
-              </p>
-
-              <div
-                className="p-8 rounded-2xl my-8"
-                style={{
-                  background: `linear-gradient(to right, #E6F0FF, #FFFCE0)`,
-                  borderLeft: `4px solid ${COLORS.primary}`
-                }}
-              >
-                <p className="text-xl font-semibold mb-4" style={{ color: COLORS.primary }}>
-                  Nossa Evolução
-                </p>
-                <p>
-                  A nossa empresa cresceu ao longo dos anos e, com cada etapa, buscamos sempre inovar e melhorar.
-                </p>
+              {/* Evolução */}
+              <div className="mt-10">
+                <h3 className="text-3xl font-bold mb-6 animate-fade-in" style={{ color: COLORS.primary }}>
+                  Evolução
+                </h3>
+                <div className="space-y-4">
+                  <p className="animate-fade-in text-justify">
+                    O crescimento veio acompanhado de novos horizontes. Além da loja, atuamos também em construção, manutenção e projetos de redes de distribuição, além da fabricação de Kit Postes padrão Celesc e Cooperativa, unindo experiência e tecnologia em cada etapa do trabalho.
+                  </p>
+                  <p className="animate-fade-in text-justify italic" style={{ color: COLORS.primary }}>
+                    Mais de três décadas depois, seguimos com o mesmo propósito que nos trouxe até aqui: entregar soluções elétricas seguras, eficientes e acessíveis, sempre com energia para evoluir.
+                  </p>
+                </div>
               </div>
 
-              <p className="animate-fade-in">
-                Conseguimos consolidar nossa presença no seguimento e hoje somos <span className="font-bold" style={{ color: COLORS.primary }}>referência no ramo</span>.
-                Com uma equipe comprometida, conseguimos realizar feitos importantes.
-              </p>
+              {/* Divisor */}
+              <div className="border-t border-gray-200 my-8"></div>
 
-              <p className="text-xl font-semibold text-center mt-8 animate-fade-in" style={{ color: COLORS.primary }}>
-                Estamos orgulhosos da nossa história e ansiosos para as novas conquistas que vamos alcançar juntos.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Seção Missão, Visão e Valores */}
-      <section id="missao" className="py-20 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4">
-          <h2
-            className="text-4xl md:text-5xl font-bold text-center mb-16"
-            style={{ color: COLORS.primary }}
-          >
-            MISSÃO, VISÃO E VALORES
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* Missão */}
-            <div
-              className="bg-white p-8 rounded-2xl shadow-lg transition-all transform hover:-translate-y-2 duration-300"
-              style={{ borderTop: `4px solid ${COLORS.secondary}` }}
-            >
-              <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto"
-                style={{ background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})` }}
-              >
-                <Lightbulb className="text-white" size={40} />
-              </div>
-              <h3 className="text-2xl font-bold text-center mb-4" style={{ color: COLORS.primary }}>
-                Nossa Missão
-              </h3>
-              <p className="text-gray-700 text-center leading-relaxed text-lg">
-                Entregamos diariamente soluções inteligentes para viver melhor.
-              </p>
-            </div>
-
-            {/* Visão */}
-            <div
-              className="bg-white p-8 rounded-2xl shadow-lg transition-all transform hover:-translate-y-2 duration-300"
-              style={{ borderTop: `4px solid ${COLORS.primary}` }}
-            >
-              <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto"
-                style={{ background: `linear-gradient(to bottom right, ${COLORS.primary}, ${COLORS.primaryDark})` }}
-              >
-                <Target className="text-white" size={40} />
-              </div>
-              <h3 className="text-2xl font-bold text-center mb-4" style={{ color: COLORS.primary }}>
-                Nossa Visão
-              </h3>
-              <p className="text-gray-700 text-center leading-relaxed text-lg">
-                Chegar em 2025 com uma equipe altamente qualificada entregando um aumento de 50% no faturamento.
-              </p>
-            </div>
-
-            {/* Valores */}
-            <div
-              className="bg-white p-8 rounded-2xl shadow-lg transition-all transform hover:-translate-y-2 duration-300"
-              style={{ borderTop: `4px solid ${COLORS.secondary}` }}
-            >
-              <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto"
-                style={{ background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})` }}
-              >
-                <Scale className="text-white" size={40} />
-              </div>
-              <h3 className="text-2xl font-bold text-center mb-4" style={{ color: COLORS.primary }}>
-                Nossos Valores
-              </h3>
-              <div className="text-gray-700 text-center leading-relaxed text-lg space-y-2">
-                <p className="font-semibold" style={{ color: COLORS.primary }}>Energia</p>
-                <p className="font-semibold" style={{ color: COLORS.primary }}>Comprometimento</p>
-                <p className="font-semibold" style={{ color: COLORS.primary }}>Ética</p>
+              {/* Visão de futuro */}
+              <div className="mt-10">
+                <h3 className="text-3xl font-bold mb-6 animate-fade-in" style={{ color: COLORS.primary }}>
+                  Visão de futuro
+                </h3>
+                <div className="space-y-4">
+                  <p className="animate-fade-in text-justify">
+                    O futuro da Elétrons é iluminado pela inovação. Estamos comprometidos em modernizar nossos processos, ampliar nossas estruturas e adotar práticas sustentáveis, sem abrir mão da essência que nos diferencia: o cuidado com as pessoas e o compromisso com a excelência.
+                  </p>
+                  <p className="animate-fade-in text-justify font-semibold text-xl italic" style={{ color: COLORS.primary }}>
+                    Acreditamos que energia é muito mais do que eletricidade, é o que move o progresso e conecta pessoas, ideias e sonhos.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -387,14 +440,78 @@ const Home = () => {
                 </h4>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Linhas de conexão (decorativas) */}
-            <div className="hidden md:block relative -mt-48 mb-48 pointer-events-none">
-              <svg className="w-full h-48" viewBox="0 0 800 200">
-                <line x1="400" y1="0" x2="133" y2="200" stroke={COLORS.secondary} strokeWidth="3" strokeDasharray="5,5" />
-                <line x1="400" y1="0" x2="400" y2="200" stroke={COLORS.secondary} strokeWidth="3" strokeDasharray="5,5" />
-                <line x1="400" y1="0" x2="667" y2="200" stroke={COLORS.secondary} strokeWidth="3" strokeDasharray="5,5" />
-              </svg>
+      {/* Seção Missão, Visão e Valores */}
+      <section id="missao" className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto px-4">
+          <h2
+            className="text-4xl md:text-5xl font-bold text-center mb-16"
+            style={{ color: COLORS.primary }}
+          >
+            MISSÃO, VISÃO E VALORES
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Missão */}
+            <div
+              className="bg-white p-8 rounded-2xl shadow-lg transition-all transform hover:-translate-y-2 duration-300"
+              style={{ borderTop: `4px solid ${COLORS.secondary}` }}
+            >
+              <div
+                className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto"
+                style={{ background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})` }}
+              >
+                <Lightbulb className="text-white" size={40} />
+              </div>
+              <h3 className="text-2xl font-bold text-center mb-4" style={{ color: COLORS.primary }}>
+                Nossa Missão
+              </h3>
+              <p className="text-gray-700 text-center leading-relaxed text-lg">
+                Entregamos diariamente soluções inteligentes para viver melhor.
+              </p>
+            </div>
+
+            {/* Visão */}
+            <div
+              className="bg-white p-8 rounded-2xl shadow-lg transition-all transform hover:-translate-y-2 duration-300"
+              style={{ borderTop: `4px solid ${COLORS.primary}` }}
+            >
+              <div
+                className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto"
+                style={{ background: `linear-gradient(to bottom right, ${COLORS.primary}, ${COLORS.primaryDark})` }}
+              >
+                <Target className="text-white" size={40} />
+              </div>
+              <h3 className="text-2xl font-bold text-center mb-4" style={{ color: COLORS.primary }}>
+                Nossa Visão
+              </h3>
+              <p className="text-gray-700 text-center leading-relaxed text-lg">
+                Chegar em 2027 com uma equipe altamente qualificada entregando um aumento de 50% no faturamento.
+              </p>
+            </div>
+
+            {/* Valores */}
+            <div
+              className="bg-white p-8 rounded-2xl shadow-lg transition-all transform hover:-translate-y-2 duration-300"
+              style={{ borderTop: `4px solid ${COLORS.secondary}` }}
+            >
+              <div
+                className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto"
+                style={{ background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})` }}
+              >
+                <Scale className="text-white" size={40} />
+              </div>
+              <h3 className="text-2xl font-bold text-center mb-4" style={{ color: COLORS.primary }}>
+                Nossos Valores
+              </h3>
+              <div className="text-gray-700 text-center leading-relaxed text-lg space-y-2">
+                <p className="font-semibold" style={{ color: COLORS.primary }}>Energia</p>
+                <p className="font-semibold" style={{ color: COLORS.primary }}>Comprometimento</p>
+                <p className="font-semibold" style={{ color: COLORS.primary }}>Ética</p>
+              </div>
             </div>
           </div>
         </div>
@@ -434,18 +551,27 @@ const Home = () => {
       {/* Footer */}
       <footer
         id="contato"
-        className="text-white pt-16 pb-8"
+        className="text-white pt-10 pb-6"
         style={{ backgroundColor: '#000E22' }}
       >
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {/* Coluna 1 - Localização */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            {/* Coluna 1 - Logo */}
+            <div className="flex items-start justify-center lg:justify-start">
+              <img
+                src="http://eletronsmateriaiseletricos.com.br/wp-content/uploads/2018/11/logo-eletrons.png"
+                alt="Grupo Elétrons"
+                className="h-20 w-auto"
+              />
+            </div>
+
+            {/* Coluna 2 - Localização */}
             <div>
-              <h3 className="text-xl font-bold mb-4" style={{ color: COLORS.secondary }}>Localização</h3>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <MapPin style={{ color: COLORS.secondary }} className="flex-shrink-0 mt-1" size={20} />
-                  <p className="text-gray-300">
+              <h3 className="text-lg font-bold mb-2.5" style={{ color: COLORS.secondary }}>Localização</h3>
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-2">
+                  <MapPin style={{ color: COLORS.secondary }} className="flex-shrink-0 mt-1" size={18} />
+                  <p className="text-gray-300 text-sm leading-relaxed">
                     R. Prudente de Morais, 638<br />
                     Centro<br />
                     Tubarão - SC<br />
@@ -456,10 +582,10 @@ const Home = () => {
                   href="https://maps.google.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 transition-colors"
+                  className="inline-flex items-center gap-1 transition-colors text-sm"
                   style={{ color: COLORS.secondary }}
                 >
-                  <MapPin size={18} />
+                  <MapPin size={16} />
                   Ver no Google Maps
                 </a>
               </div>
@@ -467,75 +593,66 @@ const Home = () => {
 
             {/* Coluna 2 - Redes Sociais */}
             <div>
-              <h3 className="text-xl font-bold mb-4" style={{ color: COLORS.secondary }}>Redes Sociais</h3>
-              <div className="space-y-3">
+              <h3 className="text-lg font-bold mb-2.5" style={{ color: COLORS.secondary }}>Redes Sociais</h3>
+              <div className="space-y-1.5">
                 <a
                   href="https://www.instagram.com/eletronsoficial/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-gray-300 hover:text-gray-100 transition-colors"
+                  className="flex items-center gap-2 text-gray-300 hover:text-gray-100 transition-colors"
                 >
-                  <Instagram size={24} />
-                  <span>Instagram</span>
+                  <Instagram size={20} />
+                  <span className="text-sm">Instagram</span>
                 </a>
                 <a
                   href="https://www.facebook.com/eletronsoficial"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-gray-300 hover:text-gray-100 transition-colors"
+                  className="flex items-center gap-2 text-gray-300 hover:text-gray-100 transition-colors"
                 >
-                  <Facebook size={24} />
-                  <span>Facebook</span>
-                </a>
-                <a
-                  href="https://wa.me/5548999866454"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-gray-300 hover:text-gray-100 transition-colors"
-                >
-                  <MessageCircle size={24} />
-                  <span>WhatsApp</span>
+                  <Facebook size={20} />
+                  <span className="text-sm">Facebook</span>
                 </a>
               </div>
             </div>
 
             {/* Coluna 3 - Canal de Denúncia */}
             <div>
-              <h3 className="text-xl font-bold mb-4" style={{ color: COLORS.secondary }}>Ouvidoria</h3>
-              <p className="text-gray-300 mb-4">
-                Canal confidencial para denúncias e sugestões
+              <h3 className="text-lg font-bold mb-2.5" style={{ color: COLORS.secondary }}>Ouvidoria</h3>
+              <p className="text-gray-300 mb-2.5 text-sm leading-relaxed">
+                Canal confidencial para<br />denúncias e sugestões
               </p>
               <a
                 href="https://docs.google.com/forms"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block px-6 py-3 rounded-lg font-semibold transition-colors"
+                className="inline-block px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
                 style={{
                   backgroundColor: COLORS.secondary,
                   color: COLORS.primary
                 }}
               >
-                Acessar Canal de Denúncia
+                Acessar Canal
               </a>
             </div>
 
             {/* Coluna 4 - Contato */}
             <div>
-              <h3 className="text-xl font-bold mb-4" style={{ color: COLORS.secondary }}>Contato</h3>
-              <div className="space-y-3">
+              <h3 className="text-lg font-bold mb-2.5" style={{ color: COLORS.secondary }}>Contato</h3>
+              <div className="space-y-1.5">
                 <a
-                  href="mailto:contato@grupoeletrons.com.br"
-                  className="flex items-center gap-3 text-gray-300 hover:text-gray-100 transition-colors"
+                  href="mailto:contato@eletronsmateriaiseletricos.com.br"
+                  className="flex items-start gap-2 text-gray-300 hover:text-gray-100 transition-colors break-all"
                 >
-                  <Mail size={20} />
-                  <span>contato@grupoeletrons.com.br</span>
+                  <Mail size={18} className="flex-shrink-0 mt-0.5" />
+                  <span className="text-sm leading-relaxed">contato@eletronsmateriaiseletricos.com.br</span>
                 </a>
                 <a
-                  href="tel:+554830000000"
-                  className="flex items-center gap-3 text-gray-300 hover:text-gray-100 transition-colors"
+                  href="tel:+554836265170"
+                  className="flex items-center gap-2 text-gray-300 hover:text-gray-100 transition-colors"
                 >
-                  <Phone size={20} />
-                  <span>(48) 3000-0000</span>
+                  <Phone size={18} />
+                  <span className="text-sm">(48) 3626-5170</span>
                 </a>
               </div>
             </div>
@@ -543,10 +660,10 @@ const Home = () => {
 
           {/* Rodapé inferior */}
           <div
-            className="pt-8 text-center"
+            className="pt-5 text-center"
             style={{ borderTop: '1px solid #002B67' }}
           >
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-sm">
               © 2025 Grupo Elétrons. Todos os direitos reservados.
             </p>
           </div>
