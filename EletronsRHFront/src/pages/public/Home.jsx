@@ -301,7 +301,7 @@ const Home = () => {
       {/* Hero Section - Imagem com Botão */}
       <section className="relative w-full bg-white">
         <img
-          src="/src/assets/images/agrupar2.png"
+          src="/images/Agrupar2.png"
           alt="Grupo Elétrons"
           className="w-full h-auto object-contain"
           onError={(e) => {
@@ -635,7 +635,7 @@ const Home = () => {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: 'url(/src/assets/images/IMG_7419.JPG)',
+            backgroundImage: 'url(/images/IMG_7419.JPG)',
             opacity: 0.5
           }}
         ></div>
