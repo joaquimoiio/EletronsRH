@@ -14,7 +14,8 @@ import {
   Zap,
   Building2,
   HardHat,
-  Factory
+  Factory,
+  ShoppingCart
 } from 'lucide-react';
 
 const COLORS = {
@@ -28,6 +29,22 @@ const COLORS = {
 const Home = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [activeTooltip, setActiveTooltip] = useState(null);
+
+  const divisoesInfo = {
+    loja: {
+      title: "Loja de Materiais Elétricos",
+      description: "TÉCNICOS é uma loja completa em materiais elétricos. Trabalhamos com as melhores marcas do segmento e oferecemos sempre facilidades de negociação tanto para o dia a dia da construção civil em geral. Do básico ao acabamento."
+    },
+    montagem: {
+      title: "Montagem Elétrica (Divisão Celesc)",
+      description: "Atuamos no ramo de instalações elétricas com grande experiência no mercado. Serviços com qualidade e segurança, profissionais devidamente treinados."
+    },
+    fabricacao: {
+      title: "Fabricação de Poste Homologado Celesc",
+      description: "Nossa fábrica de kit postes conta com um rigoroso padrão de qualidade onde todo produto é acompanhado de materiais homologados pela concessionária. O kit poste é formado pelo poste, rabicho, caixa para abrigo dos medidores (DPS), haste de aterramento e conectores.\n\nNosso produto é acompanhado por profissionais da fabricação à entrega.\n\nSOMOS HOMOLOGADOS: nossa fábrica de kit postes é homologada pela CEMIG e demais cooperativas (CERGAL, CERPA, LCEG, AMMA, COOPERVAL, ANACE, CEGERO, CERMOFUL)."
+    }
+  };
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -167,8 +184,9 @@ const Home = () => {
                   <div className="absolute top-full right-0 mt-0 bg-white shadow-lg min-w-[240px] py-1 border-t-2 border-gray-800">
                     <button
                       onClick={() => scrollToSection('contato')}
-                      className="w-full text-left block px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                      className="w-full text-left flex items-center gap-2 px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                     >
+                      <ShoppingCart size={16} />
                       Solicite um Orçamento
                     </button>
                   </div>
@@ -264,8 +282,9 @@ const Home = () => {
                   <div className="bg-gray-50">
                     <button
                       onClick={() => { scrollToSection('contato'); setMobileMenuOpen(false); }}
-                      className="w-full text-left block py-2 px-8 text-sm text-gray-600 hover:text-gray-900"
+                      className="w-full text-left flex items-center gap-2 py-2 px-8 text-sm text-gray-600 hover:text-gray-900"
                     >
+                      <ShoppingCart size={16} />
                       Solicite um Orçamento
                     </button>
                   </div>
@@ -279,40 +298,30 @@ const Home = () => {
       {/* Espaçador para o header fixo */}
       <div className="h-20"></div>
 
-      {/* Hero Section */}
-      <section
-        className="relative text-white py-20 md:py-32 overflow-hidden"
-        style={{ background: `linear-gradient(to bottom right, ${COLORS.primary}, #003A8A, ${COLORS.primaryDark})` }}
-      >
-        <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute top-20 left-10 w-72 h-72 rounded-full blur-3xl"
-            style={{ backgroundColor: COLORS.secondary }}
-          ></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-        </div>
+      {/* Hero Section - Imagem com Botão */}
+      <section className="relative w-full bg-white">
+        <img
+          src="/src/assets/images/agrupar2.png"
+          alt="Grupo Elétrons"
+          className="w-full h-auto object-contain"
+          onError={(e) => {
+            e.target.style.display = 'none';
+          }}
+        />
 
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center animate-fade-in">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              Bem-vindo ao
-              <span className="block mt-2" style={{ color: COLORS.secondary }}>Grupo Elétrons</span>
-            </h1>
-            <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
-              Entregamos diariamente soluções inteligentes para viver melhor
-            </p>
-            <button
-              onClick={() => scrollToSection('historia')}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-xl"
-              style={{
-                backgroundColor: COLORS.secondary,
-                color: COLORS.primary
-              }}
-            >
-              Conheça Nossa História
-              <ChevronDown size={20} />
-            </button>
-          </div>
+        {/* Botão no canto inferior esquerdo */}
+        <div className="absolute bottom-16 left-16 z-10">
+          <button
+            onClick={() => scrollToSection('historia')}
+            className="inline-flex items-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold text-base md:text-lg transition-all transform hover:scale-105 shadow-xl"
+            style={{
+              backgroundColor: COLORS.secondary,
+              color: COLORS.primary
+            }}
+          >
+            Conheça Nossa História
+            <ChevronDown size={20} />
+          </button>
         </div>
       </section>
 
@@ -373,8 +382,8 @@ const Home = () => {
       </section>
 
       {/* Seção Estrutura Organizacional */}
-      <section id="estrutura" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+      <section id="estrutura" className="py-20 bg-white overflow-visible relative" style={{ zIndex: 10 }}>
+        <div className="container mx-auto px-4 overflow-visible">
           <h2
             className="text-4xl md:text-5xl font-bold text-center mb-8"
             style={{ color: COLORS.primary }}
@@ -385,7 +394,7 @@ const Home = () => {
             O Grupo Elétrons é formado por divisões especializadas que garantem eficiência, inovação e qualidade em cada etapa de nossos serviços.
           </p>
 
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto overflow-visible">
             {/* Grupo Principal */}
             <div
               className="text-white p-8 rounded-2xl shadow-xl mb-8 text-center"
@@ -396,48 +405,147 @@ const Home = () => {
             </div>
 
             {/* Divisões */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 gap-y-8">
               {/* Loja de Materiais */}
-              <div
-                className="p-6 rounded-xl shadow-lg transition-all transform hover:-translate-y-2"
-                style={{
-                  background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})`,
-                  color: COLORS.primary
-                }}
-              >
-                <Zap className="mx-auto mb-4" size={36} />
-                <h4 className="text-xl font-bold text-center">
-                  Loja de Materiais Elétricos
-                </h4>
+              <div className="relative">
+                <div
+                  className="p-6 rounded-xl shadow-lg transition-all transform hover:-translate-y-2 cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})`,
+                    color: COLORS.primary
+                  }}
+                  onMouseEnter={() => setActiveTooltip('loja')}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onClick={() => setActiveTooltip(activeTooltip === 'loja' ? null : 'loja')}
+                >
+                  <Zap className="mx-auto mb-4" size={36} />
+                  <h4 className="text-xl font-bold text-center">
+                    Loja de Materiais Elétricos
+                  </h4>
+                </div>
+
+                {/* Tooltip abaixo do card */}
+                {activeTooltip === 'loja' && (
+                  <div className="mt-4 md:absolute md:left-0 md:right-0 md:top-full md:mt-2" style={{ zIndex: 9999 }}>
+                    <div
+                      className="bg-white p-4 rounded-lg shadow-2xl border-2"
+                      style={{
+                        borderColor: COLORS.secondary
+                      }}
+                    >
+                      <button
+                        className="float-right text-gray-500 hover:text-gray-700 text-lg font-bold -mt-1 -mr-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveTooltip(null);
+                        }}
+                      >
+                        ✕
+                      </button>
+                      <h5 className="font-bold text-sm mb-2 pr-6" style={{ color: COLORS.primary }}>
+                        {divisoesInfo.loja.title}
+                      </h5>
+                      <p className="text-xs text-gray-700 leading-relaxed">
+                        {divisoesInfo.loja.description}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Montagem Elétrica */}
-              <div
-                className="p-6 rounded-xl shadow-lg transition-all transform hover:-translate-y-2"
-                style={{
-                  background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})`,
-                  color: COLORS.primary
-                }}
-              >
-                <HardHat className="mx-auto mb-4" size={36} />
-                <h4 className="text-xl font-bold text-center">
-                  Montagem Elétrica
-                  <span className="block text-sm mt-2">(Divisão Celesc)</span>
-                </h4>
+              <div className="relative">
+                <div
+                  className="p-6 rounded-xl shadow-lg transition-all transform hover:-translate-y-2 cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})`,
+                    color: COLORS.primary
+                  }}
+                  onMouseEnter={() => setActiveTooltip('montagem')}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onClick={() => setActiveTooltip(activeTooltip === 'montagem' ? null : 'montagem')}
+                >
+                  <HardHat className="mx-auto mb-4" size={36} />
+                  <h4 className="text-xl font-bold text-center">
+                    Montagem Elétrica
+                    <span className="block text-sm mt-2">(Divisão Celesc)</span>
+                  </h4>
+                </div>
+
+                {/* Tooltip abaixo do card */}
+                {activeTooltip === 'montagem' && (
+                  <div className="mt-4 md:absolute md:left-0 md:right-0 md:top-full md:mt-2" style={{ zIndex: 9999 }}>
+                    <div
+                      className="bg-white p-4 rounded-lg shadow-2xl border-2"
+                      style={{
+                        borderColor: COLORS.secondary
+                      }}
+                    >
+                      <button
+                        className="float-right text-gray-500 hover:text-gray-700 text-lg font-bold -mt-1 -mr-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveTooltip(null);
+                        }}
+                      >
+                        ✕
+                      </button>
+                      <h5 className="font-bold text-sm mb-2 pr-6" style={{ color: COLORS.primary }}>
+                        {divisoesInfo.montagem.title}
+                      </h5>
+                      <p className="text-xs text-gray-700 leading-relaxed">
+                        {divisoesInfo.montagem.description}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Fabricação */}
-              <div
-                className="p-6 rounded-xl shadow-lg transition-all transform hover:-translate-y-2"
-                style={{
-                  background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})`,
-                  color: COLORS.primary
-                }}
-              >
-                <Factory className="mx-auto mb-4" size={36} />
-                <h4 className="text-xl font-bold text-center">
-                  Fabricação de Poste Homologado Celesc
-                </h4>
+              <div className="relative">
+                <div
+                  className="p-6 rounded-xl shadow-lg transition-all transform hover:-translate-y-2 cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to bottom right, ${COLORS.secondary}, ${COLORS.secondaryDark})`,
+                    color: COLORS.primary
+                  }}
+                  onMouseEnter={() => setActiveTooltip('fabricacao')}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onClick={() => setActiveTooltip(activeTooltip === 'fabricacao' ? null : 'fabricacao')}
+                >
+                  <Factory className="mx-auto mb-4" size={36} />
+                  <h4 className="text-xl font-bold text-center">
+                    Fabricação de Poste Homologado Celesc
+                  </h4>
+                </div>
+
+                {/* Tooltip abaixo do card */}
+                {activeTooltip === 'fabricacao' && (
+                  <div className="mt-4 md:absolute md:left-0 md:right-0 md:top-full md:mt-2" style={{ zIndex: 9999 }}>
+                    <div
+                      className="bg-white p-4 rounded-lg shadow-2xl border-2"
+                      style={{
+                        borderColor: COLORS.secondary
+                      }}
+                    >
+                      <button
+                        className="float-right text-gray-500 hover:text-gray-700 text-lg font-bold -mt-1 -mr-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveTooltip(null);
+                        }}
+                      >
+                        ✕
+                      </button>
+                      <h5 className="font-bold text-sm mb-2 pr-6" style={{ color: COLORS.primary }}>
+                        {divisoesInfo.fabricacao.title}
+                      </h5>
+                      <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-line">
+                        {divisoesInfo.fabricacao.description}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -445,7 +553,7 @@ const Home = () => {
       </section>
 
       {/* Seção Missão, Visão e Valores */}
-      <section id="missao" className="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <section id="missao" className="py-20 bg-gradient-to-b from-gray-50 to-white relative" style={{ zIndex: 1 }}>
         <div className="container mx-auto px-4">
           <h2
             className="text-4xl md:text-5xl font-bold text-center mb-16"
@@ -520,10 +628,19 @@ const Home = () => {
       {/* Seção Trabalhe Conosco */}
       <section
         id="trabalhe"
-        className="py-20 text-white"
+        className="relative py-20 text-white overflow-hidden"
         style={{ background: `linear-gradient(to bottom right, ${COLORS.primary}, #003A8A, ${COLORS.primaryDark})` }}
       >
-        <div className="container mx-auto px-4 text-center">
+        {/* Imagem de fundo com 50% de opacidade */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: 'url(/src/assets/images/IMG_7419.JPG)',
+            opacity: 0.5
+          }}
+        ></div>
+
+        <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               VENHA TRABALHAR COM A GENTE
