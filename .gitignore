@@ -60,6 +60,8 @@ out/
 # Gatsby (if using)
 .cache/
 public/
+# Permitir public do frontend
+!EletronsRHFront/public/
 
 # Backend specific (if needed)
 __pycache__/
